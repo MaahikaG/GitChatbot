@@ -13,8 +13,8 @@ from langchain.chains.history_aware_retriever import create_history_aware_retrie
 from langchain_core.output_parsers import StrOutputParser
 
 # Access the API keys
-huggingfacehub_api_token = os.getenv('HUGGINGFACEHUB_API_TOKEN')
-pinecone_api_key = os.getenv('PINECONE_API_KEY')
+huggingfacehub_api_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+pinecone_api_key = st.secrets["PINECONE_API_KEY"]
 
 os.environ['HUGGINGFACEHUB_API_TOKEN'] = huggingfacehub_api_token
 os.environ['PINECONE_API_KEY'] = pinecone_api_key
