@@ -101,12 +101,10 @@ if __name__ == '__main__':
     index_name = "versionwise"
     index = pc.Index(index_name)
     embedding = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-    namespace = "command_list"
 
     vectorstore = PineconeVectorStore(
         index_name=index_name, 
         embedding=embedding,
-        namespace=namespace
     )
 
     chain = create_chain(vectorstore)
