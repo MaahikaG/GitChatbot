@@ -105,7 +105,7 @@ if __name__ == '__main__':
     vectorstore = PineconeVectorStore(
         index_name=index_name, 
         embedding=embedding,
-        namespace="git_book2"
+        namespace="git_book"
     )
 
     chain = create_chain(vectorstore)
