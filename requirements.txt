@@ -1,0 +1,7 @@
+python-dotenv
+streamlit
+langchain_huggingface
+langchain_pinecone
+langchain_core
+pinecone
+langchain
