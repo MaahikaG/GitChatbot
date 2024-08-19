@@ -1,7 +1,8 @@
+import os
 from pinecone import Pinecone
 from sentence_transformers import SentenceTransformer
 
-pc = Pinecone(api_key="64b34097-f3d5-4ee0-91d9-51ea02279463")
+pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 index = pc.Index("versionwise")
 
 
