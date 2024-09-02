@@ -14,4 +14,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Test if Streamlit can run
-        run: streamlit run app.py
+        run: streamlit run app.py &
