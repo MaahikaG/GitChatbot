@@ -1,0 +1,17 @@
+name: See if Streamlit can run
+on: [push]
+
+env:
+  PINECONE_API_KEY: ${{ secrets.PINECONE_TOKEN }}
+  HUGGINGFACE_API_TOKEN: ${{ secrets.HF_TOKEN }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Test if Streamlit can run
+        run: streamlit run app.py
