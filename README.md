@@ -20,6 +20,7 @@ It also connects to a Pinecone vector database, which currently contains vectors
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [CI/CD](#ci/cd)
 
 ## Installation
 This chatbot is publically accessible on HuggingFace Spaces, using the link https://maahikag-versionwise.hf.space. 
@@ -36,4 +37,8 @@ This chatbot is intended to provide students with tailored feedback on their com
 ## Contributing
 The main contribution required for this chatbot involves further populating the Pinecone vector database. 
 Currently, the database only contains vectors from the Git handbook, and does not read any information from the VersionWise website. 
-A future goal would be to have the chatbot give tailored feedback based on their other actions on the VersionWise website. 
+A future goal would be to have the chatbot give tailored feedback based on their other actions on the VersionWise website.
+
+## CI/CD
+- CD Pipeline
+  - Whenever anyone pushes/merges to main, the code within Maahika's HuggingFace Spaces chatbot gets updated.
