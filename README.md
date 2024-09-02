@@ -1,4 +1,4 @@
-#GitChatbot
+# GitChatbot
 ## Description
 This is the code for a Streamlit RAG chatbot hosted on HuggingFace. Its purpose is to help students learn version control using Git.
 It uses the mistralai/Mixtral-8x7B-Instruct-v0.1tral LLM model. 
