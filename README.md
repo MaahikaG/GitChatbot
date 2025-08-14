@@ -1,16 +1,4 @@
----
-title: VersionWise
-emoji: ⚡
-colorFrom: purple
-colorTo: blue
-sdk: streamlit
-sdk_version: 1.36.0
-app_file: app.py
-pinned: false
----
-
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
-
+# GitChatbot
 ## Description
 This is the code for a Streamlit RAG chatbot hosted on HuggingFace. Its purpose is to help students learn version control using Git.
 It uses the mistralai/Mixtral-8x7B-Instruct-v0.1tral LLM model. 
@@ -20,6 +8,7 @@ It also connects to a Pinecone vector database, which currently contains vectors
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [CI/CD](#ci/cd)
 
 ## Installation
 This chatbot is publically accessible on HuggingFace Spaces, using the link https://maahikag-versionwise.hf.space. 
@@ -36,4 +25,10 @@ This chatbot is intended to provide students with tailored feedback on their com
 ## Contributing
 The main contribution required for this chatbot involves further populating the Pinecone vector database. 
 Currently, the database only contains vectors from the Git handbook, and does not read any information from the VersionWise website. 
-A future goal would be to have the chatbot give tailored feedback based on their other actions on the VersionWise website. 
+A future goal would be to have the chatbot give tailored feedback based on their other actions on the VersionWise website.
+
+## CI/CD
+- CI Pipeline
+  - Whenever anyone pushes to any branch, a test is executed to see if the streamlit app can be run. 
+- CD Pipeline
+  - Whenever anyone pushes/merges to main, the code within Maahika's HuggingFace Spaces chatbot gets updated.
