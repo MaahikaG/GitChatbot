@@ -5,3 +5,4 @@ langchain_pinecone
 langchain_core
 pinecone
 langchain
+firebase-admin
