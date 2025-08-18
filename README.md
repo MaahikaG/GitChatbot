@@ -1,3 +1,15 @@
+---
+title: VersionWise
+emoji: ⚡
+colorFrom: purple
+colorTo: blue
+sdk: gradio                
+sdk_version: 4.44.1        
+python_version: 3.9.13    
+app_file: app.py 
+pinned: false
+---
+
 # GitChatbot
 ## Description
 This is the code for a Streamlit RAG chatbot hosted on HuggingFace. Its purpose is to help students learn version control using Git.
