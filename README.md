@@ -3,7 +3,7 @@ title: VersionWise
 emoji: ⚡
 colorFrom: purple
 colorTo: blue
-sdk: gradio                
+sdk: streamlit                
 sdk_version: 4.44.1        
 python_version: 3.9.13    
 app_file: app.py 
