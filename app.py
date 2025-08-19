@@ -18,7 +18,25 @@ from firebase_admin import credentials, auth
 import json
 
 # Access the API keys
-huggingfacehub_api_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+# Debug: Show what secrets are available
+st.write("Debug Info:")
+st.write("Available secrets:", list(st.secrets.keys()) if hasattr(st, 'secrets') else "No secrets object")
+st.write("Environment variables with HF:", [k for k in os.environ.keys() if 'HF' in k.upper()])
+st.write("Environment variables with TOKEN:", [k for k in os.environ.keys() if 'TOKEN' in k.upper()])
+
+# Try multiple ways to get the token
+try:
+  huggingfacehub_api_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
+  st.write("✅ Found token in st.secrets")
+except Exception as e:
+  st.write("❌ Error accessing st.secrets:", str(e))
+  try:
+      huggingfacehub_api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+      st.write("✅ Found token in environment variables")
+  except Exception as e2:
+      st.write("❌ Error accessing environment:", str(e2))
+      st.stop()
+
 pinecone_api_key = st.secrets["PINECONE_API_KEY"]
 
 os.environ['HUGGINGFACEHUB_API_TOKEN'] = huggingfacehub_api_token
