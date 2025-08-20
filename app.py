@@ -80,6 +80,56 @@ if firebase_token:
 # app config
 st.set_page_config(page_title="Streamlit Chatbot", page_icon="🤖")
 st.title("Chatbot")
+# ADD THIS - JavaScript to receive command context
+st.components.v1.html("""
+<script>
+// Listen for command context from parent window (Web Terminal)
+window.addEventListener('message', function(event) {
+    console.log('Received message:', event.data);
+    
+    if (event.data.type === 'AUTO_ANALYSIS') {
+        // Store command context and trigger analysis
+        const context = event.data.data;
+        console.log('Command context received:', context);
+        
+        // Send analysis request to Streamlit
+        if (context.recentCommands && context.recentCommands.length > 0) {
+            const analysisPrompt = `Please analyze my recent terminal commands: ${context.recentCommands.join(', ')}. ${context.lastError 
+? 'I encountered this error: ' + context.lastError + '. ' : ''}Please explain what I was trying to do and provide helpful suggestions.`;
+            
+            // Trigger Streamlit rerun with the analysis prompt
+            window.parent.postMessage({
+                type: 'STREAMLIT_ANALYSIS',
+                prompt: analysisPrompt,
+                context: context
+            }, '*');
+        }
+    } else if (event.data.type === 'USER_CONTEXT') {
+        // Just update context for future user questions
+        console.log('Updated command context:', event.data.data);
+    }
+});
+
+// Listen for analysis requests from ourselves
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'STREAMLIT_ANALYSIS') {
+        // Store in session state (this requires a Streamlit component)
+        const context = event.data.context;
+        const prompt = event.data.prompt;
+        
+        // Create hidden input to trigger Streamlit
+        const input = document.createElement('input');
+        input.style.display = 'none';
+        input.id = 'auto-analysis-trigger';
+        input.value = JSON.stringify({prompt: prompt, context: context});
+        document.body.appendChild(input);
+        
+        // Trigger change event
+        input.dispatchEvent(new Event('change'));
+    }
+});
+</script>
+""", height=0)
 
 def create_chain (vectorStore):
     #Instantiate LLM
@@ -124,18 +174,36 @@ def create_chain (vectorStore):
     )
     return retrieval_chain
 
-def process_chat (chain, question, chat_history):
-    response = chain.invoke ({
-        "chat_history": chat_history,
-        "input": question
-    })
-    return response["answer"]
+def process_chat(chain, question, chat_history, command_context=None):
+      # Enhance the question with command context if available
+      enhanced_question = question
+
+      if command_context and command_context.get('recentCommands'):
+          context_info = f"\n\nUser's Recent Terminal Commands: {', '.join(command_context['recentCommands'])}"
+          if command_context.get('lastError'):
+              context_info += f"\nLast Error Encountered: {command_context['lastError']}"
+          context_info += f"\nWorking Directory: {command_context.get('workingDirectory', 'Unknown')}"
+          context_info += "\n\nPlease consider this command history when responding to help with Git learning.\n"
+
+          enhanced_question = context_info + question
+
+      response = chain.invoke({
+          "chat_history": chat_history,
+          "input": enhanced_question
+      })
+      return response["answer"]
 
 # session state
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         AIMessage(content="Hello, I am a bot. How can I help you?"),
     ]
+    
+# ADD THIS - Command context storage
+if "command_context" not in st.session_state:
+    st.session_state.command_context = None
+if "auto_analysis_done" not in st.session_state:
+    st.session_state.auto_analysis_done = False
 
 # conversation
 for message in st.session_state.chat_history:
@@ -162,7 +230,30 @@ if __name__ == '__main__':
 
     chain = create_chain(vectorstore)
 
-    chat_history = []
+    # Check for automatic analysis trigger
+    if not st.session_state.auto_analysis_done:
+        # Check URL params for command context (when opened from Web Terminal)
+        if "auto_analysis" in st.query_params:
+            try:
+                # Parse command context from URL
+                context_data = st.query_params.get("auto_analysis")
+                if context_data:
+                    # Trigger automatic analysis
+                    auto_prompt = "Please analyze my recent terminal commands and provide feedback on my Git learning progress."
+                    st.session_state.chat_history.append(HumanMessage(content=auto_prompt))
+
+                    with st.chat_message("Human"):
+                        st.markdown(auto_prompt)
+
+                    with st.chat_message("AI"):
+                        response = process_chat(chain, auto_prompt, st.session_state.chat_history, st.session_state.command_context)
+                        st.write(response)
+
+                    st.session_state.chat_history.append(AIMessage(content=response))
+                    st.session_state.auto_analysis_done = True
+                    st.rerun()
+            except:
+                pass
 
     user_query = st.chat_input("Type your message here...")
     if user_query is not None and user_query != "":
@@ -170,8 +261,8 @@ if __name__ == '__main__':
         with st.chat_message("Human"):
             st.markdown(user_query)
         with st.chat_message("AI"):
-            response = process_chat(chain, user_query, st.session_state.chat_history)
-            st.write(response)  
+            response = process_chat(chain, user_query, st.session_state.chat_history, st.session_state.command_context)
+            st.write(response)
         st.session_state.chat_history.append(AIMessage(content=response))
         
 
