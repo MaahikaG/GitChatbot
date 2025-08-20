@@ -1,7 +1,8 @@
 import os
 from dotenv import load_dotenv
 import streamlit as st
-from langchain_huggingface import HuggingFaceEndpoint, HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import ChatPromptTemplate
 from pinecone import Pinecone
@@ -18,29 +19,11 @@ from firebase_admin import credentials, auth
 import json
 
 # Access the API keys
-# Debug: Show what secrets are available
-st.write("Debug Info:")
-st.write("Available secrets:", list(st.secrets.keys()) if hasattr(st, 'secrets') else "No secrets object")
-st.write("Environment variables with HF:", [k for k in os.environ.keys() if 'HF' in k.upper()])
-st.write("Environment variables with TOKEN:", [k for k in os.environ.keys() if 'TOKEN' in k.upper()])
-
-# Try multiple ways to get the token
-try:
-  huggingfacehub_api_token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-  st.write("✅ Found token in st.secrets")
-except Exception as e:
-  st.write("❌ Error accessing st.secrets:", str(e))
-  try:
-      huggingfacehub_api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
-      st.write("✅ Found token in environment variables")
-  except Exception as e2:
-      st.write("❌ Error accessing environment:", str(e2))
-      st.stop()
-
 pinecone_api_key = st.secrets["PINECONE_API_KEY"]
+google_api_key = st.secrets["GOOGLE_API_KEY"]
 
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = huggingfacehub_api_token
 os.environ['PINECONE_API_KEY'] = pinecone_api_key
+os.environ['GOOGLE_API_KEY'] = google_api_key
 
 # Initialize Firebase Admin
 @st.cache_resource
@@ -100,12 +83,10 @@ st.title("Chatbot")
 
 def create_chain (vectorStore):
     #Instantiate LLM
-    llm = HuggingFaceEndpoint(
-        repo_id="HuggingFaceTB/SmolLM3-3B",
-        task="text-generation",
-        max_new_tokens=512,
-        do_sample=False,
-        repetition_penalty=1.03,
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-pro",
+        google_api_key=st.secrets["GOOGLE_API_KEY"],
+        temperature=0.7
     )
 
     prompt = ChatPromptTemplate.from_messages([
