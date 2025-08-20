@@ -54,8 +54,8 @@ initialize_firebase()
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
 
 # Get student information from URL parameters and Firebase token
-query_params = st.experimental_get_query_params()
-firebase_token = query_params.get("token", [None])[0]
+query_params = st.query_params
+firebase_token = query_params.get("token", None)
 
 student_id = None
 student_email = None
