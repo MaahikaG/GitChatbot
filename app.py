@@ -101,7 +101,7 @@ st.title("Chatbot")
 def create_chain (vectorStore):
     #Instantiate LLM
     llm = HuggingFaceEndpoint(
-        repo_id="mistralai/Mistral-7B-Instruct-v0.3",
+        repo_id="microsoft/DialoGPT-medium",
         task="text-generation",
         max_new_tokens=512,
         do_sample=False,
