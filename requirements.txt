@@ -6,3 +6,4 @@ langchain_core
 pinecone
 langchain
 firebase-admin
+sentence-transformers
