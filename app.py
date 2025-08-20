@@ -101,7 +101,7 @@ st.title("Chatbot")
 def create_chain (vectorStore):
     #Instantiate LLM
     llm = HuggingFaceEndpoint(
-        repo_id="google/flan-t5-large",
+        repo_id="HuggingFaceTB/SmolLM3-3B",
         task="text-generation",
         max_new_tokens=512,
         do_sample=False,
