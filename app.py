@@ -84,7 +84,7 @@ st.title("Chatbot")
 def create_chain (vectorStore):
     #Instantiate LLM
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
+        model="gemini-1.5-flash",
         google_api_key=st.secrets["GOOGLE_API_KEY"],
         temperature=0.7
     )
