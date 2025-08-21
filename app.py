@@ -87,14 +87,14 @@ st.components.v1.html("""
 window.addEventListener('message', function(event) {
     console.log('Received message:', event.data);
     
-    if (event.data.type === 'AUTO_ANALYSIS') {
+    if (event.data.type === 'COMMAND_CONTEXT' && event.data.data.autoAnalysis) {
         // Store command context and trigger analysis
         const context = event.data.data;
         console.log('Command context received:', context);
         
         // Send analysis request to Streamlit
-        if (context.recentCommands && context.recentCommands.length > 0) {
-            const analysisPrompt = `Please analyze my recent terminal commands: ${context.recentCommands.join(', ')}. ${context.lastError 
+        if (context.commands && context.commands.length > 0) {
+            const analysisPrompt = `Please analyze my recent terminal commands: ${context.commands.join(', ')}. ${context.lastError 
 ? 'I encountered this error: ' + context.lastError + '. ' : ''}Please explain what I was trying to do and provide helpful suggestions.`;
             
             // Trigger Streamlit rerun with the analysis prompt
